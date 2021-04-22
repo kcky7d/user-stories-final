@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% set active_page = 'welcome' %}
+
+{% block content %}
+<div class="col-lg-9 offset-lg-2 my-5">
+  <br>
+  <h2><b>Welcome to the User Story Creation Page</h2><br>
+  <h4><em><b>How to get started</em></h4>
+  <h5>Select what you would like to do in the navigation bar: <br><br>
+  <b><a href="{{ url_for('welcome') }}" class="welcome-link">Welcome</a></b>
+    will always bring you back to this page if you get lost!<br><br>
+  <b><a href="{{ url_for('about_user_stories') }}" class="welcome-link">About User Stories</a></b> 
+    will explain what user stories are and why we use them <br><br>
+  <b><a href="{{ url_for('previous_submissions') }}" class="welcome-link">Previous Submissions</a></b> 
+    allows you to review and vote on user stories written by others. <br><br> 
+  <b><a href="{{ url_for('new_submission') }}" class="welcome-link">New Submission</a></b>
+    allows you to write a new user story <br><br>
+  <b><a href="#" class="welcome-link">About the Team</a></b>
+    will provide a little more information about our group and how to get in contact with us.
+  </h5>
+</div>
+{% endblock %}

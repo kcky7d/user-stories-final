@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% set active_page = 'previous_submission' %}
+
+{% block title %}Previous Submissions - {% endblock %}
+
+{% block content %}
+<div class="col-lg-10 offset-lg-2 my-5">
+
+    <h1>Previously Written User Stories</h1><hr>
+    <p style="color:blue"><em>Headings in blue are sortable</em></p>
+
+    {{table_html}}
+
+
+</div>
+
+{% endblock %}

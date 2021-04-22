@@ -1,0 +1,46 @@
+body {
+    padding-top: 56px;
+    color: black;
+    background-color: #D0D0D0;
+ }
+
+.light-mode{
+    background-color: rgb(167, 164, 164);
+}
+.navbar-brand {
+    padding-top: 0rem;
+    padding-bottom: 0rem;
+}
+a:hover {
+    text-decoration: none;
+ }
+
+.welcome-link{
+    color:black;
+ }
+
+ /* CSS styling for Dark-mode and light mode toggle */
+
+i.toggler {
+    color: white;
+    float: right;
+    font-size: 20px;
+}
+
+.dark-mode {
+    background-color:#343a40;
+}
+
+.dark-mode i.toggler {
+    color: grey;
+}
+
+.dark-mode .container {
+    background-color: #343a40;
+    color: white;
+}
+
+
+.dark-mode .welcome-link{
+   color: darkgrey;
+}

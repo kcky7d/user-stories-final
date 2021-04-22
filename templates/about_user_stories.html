@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% set active_page = 'about_user_stories' %}
+
+{% block content %}
+<div class="col-lg-9 offset-lg-2 my-5">
+  <br>
+  <h2><b>You may be asking yourself.....</h2><br>
+  <h4><em><b>What is a user story?</em></h4>
+  <h5>A user story is a short, simple statement from a user to express a needed requirement. <br>
+  It is quite simply a way for you to request a feature you'd like to see in a new tool!</h5><br><br>
+  <h4><em><b>Why should I write a user story?</em></h4>
+  <h5>A user story is the best way for you to express your needs. <br>By using this tool, you will be able to express
+  what new features you need to do your job better. You are cutting out the middle man!
+  </h5>
+  <br><br>
+  <h4><em><b>How do I write a user story?</em></h4>
+  <h5>A user story has a very simple format:<br> As a <em> (insert work role)</em>, I need <em> (insert feature request)</em>,
+    so that <em> (insert justification)</em>. <br><br> It's as simple as that! Here is a completed example:<br>
+    As a <em>payroll specialist</em>, I need <em>a tool to sum up employee salaries by department</em>, so that <em>I can quickly complete TPS reports.</em></h5>
+  <br><br>
+  <h4><em><b>How do I get started?</em></h4>
+    <h5>Select what you would like to do in the navigation bar: <br><br>
+      <b><a href="{{ url_for('welcome') }}" style="color:black">Welcome</a></b>
+        will always bring you back to this page if you get lost!<br><br>
+      <b><a href="{{ url_for('previous_submissions') }}" style="color:black">Previous Submissions</a></b> 
+        allows you to review and vote on user stories written by others. <br><br> 
+      <b><a href="{{ url_for('new_submission') }}" style="color:black">New Submission</a></b>
+        allows you to write a new user story <br><br>
+      <b><a href="#" style="color:black">About the Team</a></b>
+        will provide a little more information about our group and how to get in contact with us.
+      </h5>
+</div>
+{% endblock %}
