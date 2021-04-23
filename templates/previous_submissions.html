@@ -7,7 +7,31 @@
 <div class="col-lg-10 offset-lg-2 my-5">
 
     <h1>Previously Written User Stories</h1><hr>
-    <p style="color:blue"><em>Headings in blue are sortable</em></p>
+    <!-- <form action="{{ url_for('previous_submissions') }}" method="GET">
+        <div class="form-group">
+            {{ form.tool.label }}
+            {{ form.tool(class="form-control") }}
+
+            {{ form.work_role.label }}
+            {{ form.work_role(class="form-control") }}
+            {{ form.submit(class="btn btn-primary form-control") }}
+        </div>
+    </form> -->
+    <table class="previous_form">
+        <tr>
+                <form action="{{ url_for('previous_submissions') }}" method="GET">
+                    <div class="form-group">
+                        <td>{{ form.tool.label }}{{ form.tool(class="form-control") }}</td>
+            
+                        <td>{{ form.work_role.label }}{{ form.work_role(class="form-control") }}</td>
+                        <td>{{ form.submit(class="btn btn-primary form-control") }}</td>
+                    </div>
+                </form>     
+
+        </tr>
+    </table>
+    <p style="color:blue"><em>Headings in blue are sortable</em>
+    </p>
 
     {{table_html}}
 

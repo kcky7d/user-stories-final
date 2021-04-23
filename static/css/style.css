@@ -19,6 +19,39 @@ a:hover {
     color:black;
  }
 
+
+ table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+table.previous_form td {
+    background-color: #a7a4a4;
+    border: 1px solid #a7a4a4;
+    width: 50%
+}
+
+td, th {
+  border: 1px solid black;
+  text-align: left;
+  padding: 8px;
+}
+
+th {
+    background-color: #343a40;
+    color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #92a1a1;
+}
+
+tr:nth-child(odd) {
+  background-color: grey;
+}
+
+
+
  /* CSS styling for Dark-mode and light mode toggle */
 
 i.toggler {

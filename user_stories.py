@@ -56,6 +56,10 @@ class NewSubmissionForm(FlaskForm):
     rationale   = TextAreaField("Rationale")
     submit      = SubmitField("Submit")
 
+class FilterForm(FlaskForm):
+    tool        = SelectField("Tool")
+    work_role   = SelectField("Work Role")    
+    submit      = SubmitField("Filter")
 
 def strip_punctuation(input):
     input = input.translate(str.maketrans('','',string.punctuation))
@@ -106,23 +110,13 @@ def new_submission():
                         )                        
         )
         conn.commit()
-        flash('Your submission: "{}" has been successfully submitted'.format(user_story), "success")
+        flash("""Your submission: "{}" has been successfully submitted. 
+                Please use our contact form on the 'About Us' page if you need to reach the team.""".format(user_story), "success")
         return redirect(url_for("welcome"))
     if form.errors:
         flash("{}".format(form.errors), "danger")
     return render_template("new_submission.html", form=form)
 
-def get_db():
-    db = getattr(g, '_database', None)
-    if db is None:
-        db = g._database = sqlite3.connect('db/user_stories.db')
-    return db
-
-@app.teardown_appcontext
-def close_connection(exception):
-    db = getattr(g, '_database', None)
-    if db is not None:
-        db.close()
 
 
 @app.route("/previous_submissions", methods=["GET", "POST"])
@@ -130,11 +124,48 @@ def previous_submissions():
     conn = get_db()
     c = conn.cursor()
 
-    us_from_db = c.execute("""SELECT
-                            id, tool, work_role, user_story 
-                            FROM user_stories
-                            ORDER BY id DESC
-    """)
+    form = FilterForm(request.args, meta={"csrf":False})
+
+    c.execute("SELECT name, name FROM tools")
+    tools = c.fetchall()
+    tools.insert(0, ("---", "---"))
+    form.tool.choices = tools
+
+    c.execute("SELECT name, name FROM work_roles")
+    work_roles = c.fetchall()
+    work_roles.insert(0, ("---", "---"))
+    form.work_role.choices = work_roles
+
+    query = """SELECT
+                    id, tool, work_role, user_story 
+                    FROM user_stories
+    """
+
+    if form.validate():
+
+        filter_queries  = []
+        parameters      = []
+
+        if form.tool.data != '---':
+            filter_queries.append("tool LIKE ?")
+            parameters.append("%" + form.tool.data + "%")
+        
+        if form.work_role.data != '---':
+            filter_queries.append("work_role LIKE ?")
+            parameters.append("%" + form.work_role.data + "%")
+
+        if filter_queries:
+            query += " WHERE "
+            query += " AND ".join(filter_queries)
+
+        us_from_db = c.execute(query, tuple(parameters))
+        print(query)
+
+    else:
+        us_from_db = c.execute(query + "ORDER BY id DESC")
+
+
+    
 
     user_stories = []
     for row in us_from_db:
@@ -153,6 +184,23 @@ def previous_submissions():
                                                 sort_reverse=reverse)
     table_html = Markup(table.__html__())
 
-    return render_template("previous_submissions.html", table_html=table_html)
+    return render_template("previous_submissions.html", table_html=table_html, form=form)
 
-    return render_template("previous_submissions.html", user_stories=user_stories)
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+def get_db():
+    db = getattr(g, '_database', None)
+    if db is None:
+        db = g._database = sqlite3.connect('db/user_stories.db')
+    return db
+
+@app.teardown_appcontext
+def close_connection(exception):
+    db = getattr(g, '_database', None)
+    if db is not None:
+        db.close()
+
