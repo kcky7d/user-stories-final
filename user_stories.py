@@ -1,7 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for, g, flash, Markup
+from flask import Flask, render_template, request, redirect, url_for, g, flash, Markup, session
 from flask_wtf import FlaskForm
 from flask_table import Table, Col, ButtonCol
-from wtforms import StringField, TextAreaField, SubmitField, SelectField, DecimalField
+from wtforms import StringField, TextAreaField, SubmitField, SelectField, DecimalField, validators
+from wtforms.validators import InputRequired, DataRequired, Length
+from wtforms.fields.html5 import EmailField
 import pdb
 import sqlite3
 import string
@@ -14,7 +16,7 @@ class SortableTable(Table):
     tool = Col('Tool')
     work_role = Col('Work Role')
     user_story = Col('User Story', allow_sort=False)
-    vote = ButtonCol('Vote', 'previous_submissions', text_fallback='+',allow_sort=False)
+    vote = ButtonCol('Vote', 'contact_form', text_fallback='Vote',allow_sort=False)
     allow_sort = True
 
     def sort_url(self, col_key, reverse=False):
@@ -52,14 +54,36 @@ class Item(object):
 class NewSubmissionForm(FlaskForm):
     tool        = SelectField("Tool")
     work_role   = SelectField("Work Role")
-    feature     = TextAreaField("Feature")
-    rationale   = TextAreaField("Rationale")
+    feature     = TextAreaField("Feature", 
+                        validators=[InputRequired("Input is required"),
+                                    DataRequired("Data is required"),
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
+    rationale   = TextAreaField("Rationale", 
+                        validators=[InputRequired("Input is required"),
+                                    DataRequired("Data is required"),
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
     submit      = SubmitField("Submit")
+
 
 class FilterForm(FlaskForm):
     tool        = SelectField("Tool")
     work_role   = SelectField("Work Role")    
     submit      = SubmitField("Filter")
+
+class ContactForm(FlaskForm):
+    first_name  = TextAreaField("First Name", 
+                        validators=[InputRequired("Input is required"),
+                                    DataRequired("Data is required")])
+    last_name   = TextAreaField("Last Name", 
+                        validators=[InputRequired("Input is required"),
+                                    DataRequired("Data is required")])
+    email       = EmailField("Email Address", [validators.DataRequired(), validators.Email()])
+
+    message     = TextAreaField("Message", 
+                        validators=[InputRequired("Input is required"),
+                                    DataRequired("Data is required"),
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
+    submit      = SubmitField("Submit")
 
 def strip_punctuation(input):
     input = input.translate(str.maketrans('','',string.punctuation))
@@ -93,7 +117,6 @@ def new_submission():
     form.work_role.choices = work_roles
 
     if form.validate_on_submit():
-        print(form.tool.data)
         tool        = form.tool.data
         work_role   = form.work_role.data
         feature     = strip_punctuation(form.feature.data).lower()
@@ -110,9 +133,8 @@ def new_submission():
                         )                        
         )
         conn.commit()
-        flash("""Your submission: "{}" has been successfully submitted. 
-                Please use our contact form on the 'About Us' page if you need to reach the team.""".format(user_story), "success")
-        return redirect(url_for("welcome"))
+        flash("Your submission: {} has been successfully submitted.".format(user_story), "success")
+        return redirect(url_for("contact_form"))
     if form.errors:
         flash("{}".format(form.errors), "danger")
     return render_template("new_submission.html", form=form)
@@ -191,6 +213,24 @@ def previous_submissions():
 def about():
     return render_template("about.html")
 
+
+@app.route("/contact_form", methods=["GET", "POST"])
+def contact_form():
+    if request.method == "POST":
+        form = ContactForm(meta={"csrf":False})
+        if form.validate_on_submit():
+            first_name        = form.first_name.data
+            flash("Thank you for your input, {}. A member of our team will be in contact shortly".format(first_name), "success")
+            return redirect(url_for("welcome"))    
+        if form.errors:
+            
+            flash("{}".format(form.errors), "info")
+
+        return render_template("contact_form.html", form=form)
+
+    else:
+        form = ContactForm()
+        return render_template("contact_form.html", form=form)
 
 def get_db():
     db = getattr(g, '_database', None)

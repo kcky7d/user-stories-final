@@ -77,3 +77,9 @@ i.toggler {
 .dark-mode .welcome-link{
    color: darkgrey;
 }
+
+.dark-mode table.previous_form td {
+    background-color: #343a40;
+    border: 1px solid #343a40;
+    width: 50%
+}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Contact Form - {% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-7 offset-lg-2 my-5">
+        <h4>Do you want to be involved in developing one of these features or maybe you just want to tell us something?</h4><hr>
+        <form method="POST" action="{{ url_for('contact_form') }}">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <b>First name</b>
+                {{ form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                <b>Last Name</b>
+                {{ form.last_name(class="form-control") }}       
+            </div>
+            <div class="form-group">
+                <b>Email Address</b>
+                {{ form.email(class="form-control") }}       
+            </div>
+            <div class="form-group">
+                <b>Message</b>
+                {{ form.message(class="form-control") }}       
+            </div>  
+            <hr>
+            {{ form.submit(class="btn btn-primary form control") }}                             
+        </form>
+    </div>
+  </div>
+  {% endblock %}
