@@ -57,11 +57,13 @@ class NewSubmissionForm(FlaskForm):
     feature     = TextAreaField("Feature", 
                         validators=[InputRequired("Input is required"),
                                     DataRequired("Data is required"),
-                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")],
+                                    render_kw={"placeholder": "describe the feature"})
     rationale   = TextAreaField("Rationale", 
                         validators=[InputRequired("Input is required"),
                                     DataRequired("Data is required"),
-                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")],
+                                    render_kw={"placeholder": "describe how this will help you"})
     submit      = SubmitField("Submit")
 
 
