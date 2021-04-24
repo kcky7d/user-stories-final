@@ -12,8 +12,7 @@
         <tr>
                 <form action="{{ url_for('previous_submissions') }}" method="GET">
                     <div class="form-group">
-                        <td>{{ form.tool.label }}{{ form.tool(class="form-control") }}</td>
-            
+                        <td>{{ form.tool.label }}{{ form.tool(class="form-control") }}</td>            
                         <td>{{ form.work_role.label }}{{ form.work_role(class="form-control") }}</td>
                         <td>{{ form.submit(class="btn btn-primary form-control") }}</td>
                     </div>
@@ -30,3 +29,4 @@
 </div>
 
 {% endblock %}
+

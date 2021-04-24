@@ -12,11 +12,12 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "secretkey"
 
 class SortableTable(Table):
+
     id = Col('ID')
     tool = Col('Tool')
     work_role = Col('Work Role')
     user_story = Col('User Story', allow_sort=False)
-    vote = ButtonCol('Vote', 'contact_form', text_fallback='Vote',allow_sort=False)
+    vote = ButtonCol('Vote', 'vote_submit', text_fallback='Vote',allow_sort=False)
     allow_sort = True
 
     def sort_url(self, col_key, reverse=False):
@@ -72,6 +73,8 @@ class FilterForm(FlaskForm):
     work_role   = SelectField("Work Role")    
     submit      = SubmitField("Filter")
 
+
+
 class ContactForm(FlaskForm):
     first_name  = TextAreaField("First Name", 
                         validators=[InputRequired("Input is required"),
@@ -84,8 +87,10 @@ class ContactForm(FlaskForm):
     message     = TextAreaField("Message", 
                         validators=[InputRequired("Input is required"),
                                     DataRequired("Data is required"),
-                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")])
+                                    Length(min=10, max=100, message="Must be between 10 and 100 characters")],
+                                    render_kw={"placeholder": "Message must be between 10 and 100 characters"})
     submit      = SubmitField("Submit")
+
 
 def strip_punctuation(input):
     input = input.translate(str.maketrans('','',string.punctuation))
@@ -141,15 +146,13 @@ def new_submission():
         flash("{}".format(form.errors), "danger")
     return render_template("new_submission.html", form=form)
 
-
-
 @app.route("/previous_submissions", methods=["GET", "POST"])
 def previous_submissions():
     conn = get_db()
     c = conn.cursor()
 
     form = FilterForm(request.args, meta={"csrf":False})
-
+   
     c.execute("SELECT name, name FROM tools")
     tools = c.fetchall()
     tools.insert(0, ("---", "---"))
@@ -165,8 +168,8 @@ def previous_submissions():
                     FROM user_stories
     """
 
+    
     if form.validate():
-
         filter_queries  = []
         parameters      = []
 
@@ -183,13 +186,10 @@ def previous_submissions():
             query += " AND ".join(filter_queries)
 
         us_from_db = c.execute(query, tuple(parameters))
-        print(query)
 
     else:
         us_from_db = c.execute(query + "ORDER BY id DESC")
 
-
-    
 
     user_stories = []
     for row in us_from_db:
@@ -208,8 +208,9 @@ def previous_submissions():
                                                 sort_reverse=reverse)
     table_html = Markup(table.__html__())
 
-    return render_template("previous_submissions.html", table_html=table_html, form=form)
 
+
+    return render_template("previous_submissions.html", table_html=table_html, form=form)
 
 @app.route("/about")
 def about():
@@ -224,15 +225,18 @@ def contact_form():
             first_name        = form.first_name.data
             flash("Thank you for your input, {}. A member of our team will be in contact shortly".format(first_name), "success")
             return redirect(url_for("welcome"))    
-        if form.errors:
-            
-            flash("{}".format(form.errors), "info")
-
+        if form.errors:           
+            flash("{}".format(form.errors), "danger")
         return render_template("contact_form.html", form=form)
 
     else:
-        form = ContactForm()
+        form = ContactForm(meta={"csrf":False})
         return render_template("contact_form.html", form=form)
+
+@app.route("/vote_success", methods=["GET", "POST"])
+def vote_submit():
+    flash("Your vote has been submitted!","success")
+    return redirect(url_for("contact_form"))
 
 def get_db():
     db = getattr(g, '_database', None)
